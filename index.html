@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>OFFICE RUN</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div id="wrapper">
+
+    <!-- СТАРТОВИЙ ЕКРАН -->
+    <div id="startScreen" class="screen active">
+      <div class="deco-chars">
+        <img src="sprites/jeka.png" class="deco-jeka" alt="">
+        <img src="sprites/ula.png"  class="deco-ula"  alt="">
+      </div>
+      <div class="logo-wrap">
+        <h1 class="logo">OFFICE<br><span>RUN</span></h1>
+      </div>
+      <p class="hint">
+        <span class="hint-desktop">← → — зміна доріжки &nbsp;|&nbsp; ПРОБІЛ — стрибок</span>
+        <span class="hint-mobile">Свайп ←→ — доріжка &nbsp;|&nbsp; Свайп ↑ — стрибок</span>
+      </p>
+      <button id="startBtn" class="btn-neon">▶ ГРАТИ</button>
+    </div>
+
+    <!-- ІГРОВИЙ ЕКРАН -->
+    <div id="gameScreen" class="screen">
+      <canvas id="gameCanvas"></canvas>
+      <div id="hud">
+        <div class="hud-pill">
+          <span class="hud-label">SCORE</span>
+          <span id="scoreVal">0</span>
+        </div>
+        <div class="hud-pill">
+          <span id="livesVal">❤️❤️❤️</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="gameOverScreen" class="screen">
+      <div class="deco-chars">
+        <img src="sprites/jeka.png" class="deco-jeka" alt="">
+        <img src="sprites/ula.png"  class="deco-ula"  alt="">
+      </div>
+      <div class="over-banner">
+        <div class="over-title">GAME<br>OVER</div>
+      </div>
+      <div class="scores-row">
+        <div class="score-box">
+          <span class="hud-label">РАХУНОК</span>
+          <span id="finalScore">0</span>
+        </div>
+        <div class="score-box">
+          <span class="hud-label">РЕКОРД</span>
+          <span id="bestScore">0</span>
+        </div>
+      </div>
+      <button id="restartBtn" class="btn-neon">↺ ЩЕ РАЗ</button>
+    </div>
+
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

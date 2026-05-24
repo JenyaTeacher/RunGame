@@ -1,0 +1,302 @@
+/* ═══════════════════════════════════════════════
+   OFFICE RUN — style.css
+   Адаптація: телефон (повний екран) + ПК (колонка по центру)
+   ═══════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cyan:   #00f5ff;
+  --pink:   #ff2d78;
+  --purple: #a855f7;
+  --gold:   #ffd700;
+  --bg:     #07070e;
+  --white:  #e8e8ff;
+  --font:   'Arial Black', 'Arial Bold', Arial, sans-serif;
+
+  /* Ширина ігрової колонки на ПК */
+  --game-w: 420px;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: #03030a;
+  overflow: hidden;
+  font-family: var(--font);
+  color: var(--white);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── ПК: темні бічні панелі з підказками ── */
+body::before, body::after {
+  content: '';
+  position: fixed;
+  top: 0; bottom: 0;
+  width: calc((100vw - var(--game-w)) / 2);
+  background: #020208;
+  z-index: 0;
+  pointer-events: none;
+}
+body::before { left: 0; border-right: 1px solid rgba(0,245,255,.08); }
+body::after  { right: 0; border-left:  1px solid rgba(255,45,120,.08); }
+
+/* Підказка на ПК — внизу бічних панелей */
+#desktopHint {
+  display: none;
+  position: fixed;
+  bottom: 32px;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+#desktopHint .dh-col {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+#desktopHint .dh-col.left  { left: calc((100vw - var(--game-w))/2 - 130px); }
+#desktopHint .dh-col.right { right: calc((100vw - var(--game-w))/2 - 130px); }
+
+.dh-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(200,200,255,.45);
+  font-size: 11px;
+  letter-spacing: .1em;
+}
+.dh-key kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px; height: 38px;
+  padding: 0 10px;
+  background: rgba(0,245,255,.06);
+  border: 1.5px solid rgba(0,245,255,.3);
+  border-radius: 8px;
+  font: 700 15px var(--font);
+  color: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,245,255,.18);
+  letter-spacing: 0;
+}
+.dh-key.pink kbd {
+  color: var(--pink);
+  border-color: rgba(255,45,120,.3);
+  background: rgba(255,45,120,.06);
+  box-shadow: 0 0 8px rgba(255,45,120,.18);
+}
+
+/* ── WRAPPER — ігрова колонка ── */
+#wrapper {
+  position: fixed;
+  top: 0; bottom: 0;
+  /* На мобільних займає весь екран */
+  left: 0; right: 0;
+  background: var(--bg);
+  z-index: 1;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s;
+  z-index: 10;
+}
+.screen.active { opacity: 1; pointer-events: all; }
+
+/* ── МЕНЮ / GAME OVER ФОН ── */
+#startScreen, #gameOverScreen {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(0,245,255,.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 80%,  rgba(168,85,247,.10) 0%, transparent 60%),
+    linear-gradient(180deg, #08080f 0%, #0d0d1f 60%, #10101a 100%);
+}
+
+/* ── ДЕКОРАТИВНІ ПЕРСОНАЖІ ── */
+/* ВАЖЛИВО: deco-chars НЕ має isolation:isolate і НЕ має opacity<1
+   бо це зламає mix-blend-mode дочірніх елементів */
+.deco-chars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* НЕ додавати: opacity, filter, transform — вони створюють stacking context */
+}
+.deco-jeka {
+  position: absolute;
+  bottom: 0; left: -6px;
+  height: 50%;
+  max-height: 340px;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  animation: deco-bob 3.2s ease-in-out infinite alternate;
+}
+.deco-ula {
+  position: absolute;
+  bottom: 0; right: -6px;
+  height: 46%;
+  max-height: 310px;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  animation: deco-bob 2.8s ease-in-out infinite alternate-reverse;
+}
+@keyframes deco-bob {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-10px); }
+}
+
+/* ── LOGO ── */
+.logo-wrap { text-align: center; position: relative; z-index: 1; }
+.logo {
+  font-size: clamp(44px, 12vw, 76px);
+  font-weight: 900; line-height: 1; letter-spacing: .05em;
+  color: var(--cyan);
+  -webkit-text-stroke: 3px #003f45;
+  text-shadow: 0 0 14px var(--cyan), 0 0 40px var(--cyan), 4px 6px 0 rgba(0,0,0,.4);
+  animation: logo-pulse 2.5s ease-in-out infinite alternate;
+}
+.logo span {
+  color: var(--pink);
+  -webkit-text-stroke: 3px #4a0018;
+  text-shadow: 0 0 14px var(--pink), 0 0 40px var(--pink), 4px 6px 0 rgba(0,0,0,.4);
+}
+@keyframes logo-pulse {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.3); }
+}
+
+/* ── ПІДКАЗКА КЕРУВАННЯ ── */
+.hint {
+  font-size: clamp(11px, 2.8vw, 13px);
+  color: rgba(200,200,255,.5);
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(0,245,255,.2);
+  border-radius: 20px;
+  padding: 8px 20px;
+  text-align: center;
+  line-height: 1.9;
+  position: relative; z-index: 1;
+}
+.hint-desktop { display: none; }
+.hint-mobile  { display: inline; }
+
+/* ── КНОПКА ── */
+.btn-neon {
+  padding: 13px 46px;
+  font: 900 19px var(--font);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--cyan);
+  background: transparent;
+  border: 3px solid var(--cyan);
+  border-radius: 50px;
+  box-shadow: 0 0 12px var(--cyan), 0 0 30px rgba(0,245,255,.25), inset 0 0 14px rgba(0,245,255,.06);
+  cursor: pointer;
+  position: relative; z-index: 1;
+  transition: transform .1s, box-shadow .15s;
+}
+.btn-neon:hover  { box-shadow: 0 0 22px var(--cyan), 0 0 55px rgba(0,245,255,.45); transform: scale(1.05); }
+.btn-neon:active { transform: scale(.97); }
+
+/* ── GAME SCREEN ── */
+#gameScreen { background: transparent; justify-content: flex-start; padding: 0; }
+#gameCanvas  { display: block; width: 100%; height: 100%; touch-action: none; }
+
+/* ── HUD ── */
+#hud {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(8,8,15,.75) 0%, transparent 100%);
+  pointer-events: none; z-index: 20;
+}
+.hud-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(0,0,0,.55);
+  border: 2px solid var(--cyan);
+  border-radius: 50px;
+  padding: 4px 14px;
+  box-shadow: 0 0 10px rgba(0,245,255,.3);
+}
+.hud-label { font-size: 9px; letter-spacing: .18em; color: rgba(0,245,255,.6); }
+#scoreVal  { font-size: clamp(17px, 5.5vw, 26px); font-weight: 900; color: var(--cyan); line-height: 1; text-shadow: 0 0 8px var(--cyan); }
+#livesVal  { font-size: clamp(14px, 4.5vw, 20px); line-height: 1; }
+
+/* ── GAME OVER ── */
+.over-banner {
+  background: linear-gradient(180deg, #3d0015 0%, #1a0008 100%);
+  border: 3px solid var(--pink);
+  border-radius: 20px;
+  padding: 14px 40px 18px;
+  box-shadow: 0 0 24px var(--pink), 0 0 60px rgba(255,45,120,.2);
+  text-align: center;
+  position: relative; z-index: 1;
+}
+.over-title {
+  font-size: clamp(42px, 13vw, 80px); font-weight: 900; line-height: .92;
+  color: var(--pink); letter-spacing: .07em;
+  text-shadow: 0 0 16px var(--pink), 0 0 40px var(--pink);
+  animation: flicker 3.5s infinite;
+}
+@keyframes flicker { 0%,94%,100%{opacity:1} 95%{opacity:.5} 97%{opacity:1} 99%{opacity:.3} }
+
+.scores-row { display: flex; gap: 14px; justify-content: center; position: relative; z-index: 1; }
+.score-box  {
+  display: flex; flex-direction: column; align-items: center;
+  background: rgba(0,0,0,.6);
+  border: 2px solid var(--purple);
+  border-radius: 16px; padding: 10px 22px;
+  box-shadow: 0 0 12px rgba(168,85,247,.4);
+  min-width: 100px;
+}
+.score-box .hud-label { font-size: 10px; margin-bottom: 2px; color: rgba(168,85,247,.8); }
+#finalScore { font-size: clamp(24px, 8vw, 40px); font-weight: 900; color: var(--pink); line-height: 1; text-shadow: 0 0 10px var(--pink); }
+#bestScore  { font-size: clamp(24px, 8vw, 40px); font-weight: 900; color: var(--gold); line-height: 1; text-shadow: 0 0 10px var(--gold); }
+
+/* ════════════════════════════════════════════
+   ПК — медіа-запит: ширина > 600px
+   ════════════════════════════════════════════ */
+@media (min-width: 600px) {
+
+  /* Wrapper стає вузькою колонкою по центру */
+  #wrapper {
+    left:  50%;
+    transform: translateX(-50%);
+    width:  var(--game-w);
+    right: auto;
+    box-shadow:
+      -20px 0 60px rgba(0,245,255,.06),
+       20px 0 60px rgba(255,45,120,.06),
+      -1px 0 0 rgba(0,245,255,.15),
+       1px 0 0 rgba(255,45,120,.15);
+  }
+
+  /* Підказки по боках на ПК */
+  #desktopHint { display: block; }
+
+  /* Підказка в меню — десктопна версія */
+  .hint-desktop { display: inline; }
+  .hint-mobile  { display: none; }
+
+  /* Більший логотип */
+  .logo { font-size: 70px; }
+
+  /* Декоративні персонажі трохи вище щоб не перекривати кнопки */
+  .deco-jeka { height: 44%; }
+  .deco-ula  { height: 40%; }
+}
